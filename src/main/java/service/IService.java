@@ -9,5 +9,7 @@ public interface IService <T>{
     boolean create(T t);
     boolean update(int id,T t);
     boolean delete(int id);
-    User findById(int id);
+    T findById(int id);
+    T findByEmail(String email);
+    List<T> sort();
 }

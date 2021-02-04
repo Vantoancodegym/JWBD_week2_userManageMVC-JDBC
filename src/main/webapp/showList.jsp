@@ -22,6 +22,7 @@
         <td>Name</td>
         <td>Email</td>
         <td><a href="/user?action=create">Create new</a></td>
+        <td><a href="/user?action=sort">Sort by name</a></td>
     </tr>
     <c:forEach items="${list}" var="user">
     <tr>
@@ -32,5 +33,6 @@
     </tr>
     </c:forEach>
 </table>
+<h3><a href="/user?action=findEmail">Find by email</a></h3>
 </body>
 </html>

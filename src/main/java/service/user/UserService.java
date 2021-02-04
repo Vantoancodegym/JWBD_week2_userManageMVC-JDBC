@@ -106,6 +106,44 @@ public class UserService implements IUserService{
 
 
     @Override
+    public User findByEmail(String email) {
+        User user= null;
+        Connection connection = getConnection();
+        try {
+            PreparedStatement p = connection.prepareStatement("select * from user where email=?;");
+            p.setString(1, email);
+            ResultSet resultSet = p.executeQuery();
+            while (resultSet.next()){
+                String name = resultSet.getString("name");
+                int id = resultSet.getInt("id");
+                user = new User(id, name, email);
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return user;
+    }
+
+    @Override
+    public List<User> sort() {
+        List<User> userList=new ArrayList<>();
+        Connection connection=getConnection();
+        try {
+            PreparedStatement preparedStatement=connection.prepareStatement("select * from User order by name asc ;");
+            ResultSet resultSet=preparedStatement.executeQuery();
+            while (resultSet.next()){
+                int id = resultSet.getInt("id");
+                String name=resultSet.getString("name");
+                String email=resultSet.getString("email");
+                userList.add(new User(id,name,email));
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return userList;
+    }
+
+    @Override
     public boolean delete(int id) {
         boolean check =false;
         Connection connection=getConnection();

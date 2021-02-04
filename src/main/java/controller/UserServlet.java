@@ -26,7 +26,30 @@ public class UserServlet extends HttpServlet {
                 break;
             case "update":
                 update(request,response);
+            case "findEmail":
+                Find(request,response);
+                break;
         }
+    }
+
+    private void Find(HttpServletRequest request, HttpServletResponse response) {
+        String email=request.getParameter("email");
+        RequestDispatcher dispatcher;
+        User user=userService.findByEmail(email);
+        if (user==null){
+            dispatcher=request.getRequestDispatcher("notFound.jsp");
+        }else {
+            request.setAttribute("user", user);
+            dispatcher = request.getRequestDispatcher("findByEmail.jsp");
+        }
+        try {
+            dispatcher.forward(request,response);
+        } catch (ServletException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void update(HttpServletRequest request, HttpServletResponse response) {
@@ -37,7 +60,7 @@ public class UserServlet extends HttpServlet {
         boolean check=userService.update(id,user);
         RequestDispatcher dispatcher;
         if (check){
-            showList(request,response);
+            showList(request,response,userService.findAll());
         }else {
             dispatcher=request.getRequestDispatcher("notFound.jsp");
             try {
@@ -85,8 +108,25 @@ public class UserServlet extends HttpServlet {
             case "delete":
                 delete(request,response);
                 break;
+            case "sort":
+                showList(request,response,userService.sort());
+                break;
+            case "findEmail":
+                showFormFind(request,response);
+                break;
             default:
-                showList(request,response);
+                showList(request,response,userService.findAll());
+        }
+    }
+
+    private void showFormFind(HttpServletRequest request, HttpServletResponse response) {
+        RequestDispatcher dispatcher=request.getRequestDispatcher("findByEmail.jsp");
+        try {
+            dispatcher.forward(request,response);
+        } catch (ServletException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -94,7 +134,7 @@ public class UserServlet extends HttpServlet {
         int id=Integer.parseInt(request.getParameter("id"));
         boolean check=userService.delete(id);
         if (check) {
-            showList(request,response);
+            showList(request,response,userService.findAll());
         } else {
             RequestDispatcher dispatcher = request.getRequestDispatcher("notFound.jsp");
             try {
@@ -132,8 +172,7 @@ public class UserServlet extends HttpServlet {
         }
     }
 
-    private void showList(HttpServletRequest request, HttpServletResponse response) {
-        List<User> list=userService.findAll();
+    private void showList(HttpServletRequest request, HttpServletResponse response,List<User> list) {
         request.setAttribute("list",list);
         RequestDispatcher dispatcher=request.getRequestDispatcher("showList.jsp");
         try {
